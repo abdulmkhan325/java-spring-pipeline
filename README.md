@@ -15,7 +15,6 @@ cd java-maven-sonar-argocd-helm-k8s/sprint-boot-app
 ```
 
 Execute the Maven targets to generate the artifacts
-
 ```
 mvn clean package
 ```
