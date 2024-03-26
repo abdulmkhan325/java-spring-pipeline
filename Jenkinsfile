@@ -28,6 +28,7 @@ pipeline {
         sh 'echo Build and Test'
         sh 'mvn -version'
         //sh 'cd java-spring-pipeline'
+        sh 'pwd'
         sh 'ls -ltr'
         // build the project and create a WAR file
         //sh 'cd java-spring-pipeline && mvn clean package'
