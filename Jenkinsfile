@@ -5,16 +5,31 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        //git branch: 'test', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
+        //git branch: 'test', url: 'https://github.com/abdulmkhan325/java-spring-pipeline.git'
       }
+    }
+    stage('Check Maven') {
+            steps {
+                script {
+                    // Check if Maven is installed
+                    def mvnInstalled = sh(script: 'command -v mvn', returnStatus: true)
+                    if (mvnInstalled != 0) {
+                        // Install Maven if not found
+                        echo 'Maven not found, installing...'
+                        sh 'sudo yum install -y maven'
+                    } else {
+                        echo 'Maven is already installed'
+                    }
+                }
+            }
     }
     stage('Build with Maven') {
       steps {
         sh 'echo Build and Test'
         sh 'mvn -version'
         //sh 'ls -ltr'
-        // build the project and create a JAR file
-        //sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+        // build the project and create a WAR file
+        //sh 'cd java-spring-pipeline && mvn clean package'
       }
     }   
   }
