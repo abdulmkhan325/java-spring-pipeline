@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-      SONAR_URL = "http://3.27.188.47:9009/"  
+      SONAR_URL = "http://54.66.22.85:9009/"  
     }
     
     stages {
