@@ -46,14 +46,12 @@ pipeline {
         stage('Check SonarQube Server Reachability') {
           steps {
             script {
-              def responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStatus: true)
-              def responseJson = readJSON text: responseCode
-              echo "HTTP response code: ${responseJson}"
-              //if (responseCode == 200) {
-              //  echo "SonarQube server is reachable"
-              //} else {
-              //  error "SonarQube server is not reachable. HTTP response code: ${responseCode}"
-              //}
+              int responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStatus: true) 
+              if (responseCode == 200) {
+                echo "SonarQube server is reachable"
+              } else {
+                error "SonarQube server is not reachable. HTTP response code: ${responseCode}"
+              }
             }
           }
         }
