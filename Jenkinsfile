@@ -46,7 +46,7 @@ pipeline {
         stage('Check SonarQube Server Reachability') {
           steps {
             script {
-              int responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStatus: true) 
+              def responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStdout: true) 
               if (responseCode == 200) {
                 echo "SonarQube server is reachable"
               } else {
