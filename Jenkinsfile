@@ -62,7 +62,7 @@ pipeline {
                 script {
                     def warFile = sh(returnStdout: true, script: 'find target -name "*.war"').trim()
                     if (warFile.isEmpty()) {
-                        error 'WAR file not found'
+                        error 'WAR file was not found'
                     } else {
                         echo "Found WAR file: $warFile"
                     }
