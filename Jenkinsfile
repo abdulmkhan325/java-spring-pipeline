@@ -2,6 +2,10 @@
 pipeline {
     agent any
 
+    environment {
+      SONAR_URL = "http://3.106.57.229:9000/"
+    }
+    
     stages {
         stage('Check Code Path') {
             steps {
