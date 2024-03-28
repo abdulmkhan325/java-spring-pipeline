@@ -47,7 +47,8 @@ pipeline {
           steps {
             script {
               def responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStatus: true)
-              echo "HTTP response code: ${responseCode}"
+              def responseJson = readJSON text: responseCode
+              echo "HTTP response code: ${responseJson}"
               //if (responseCode == 200) {
               //  echo "SonarQube server is reachable"
               //} else {
