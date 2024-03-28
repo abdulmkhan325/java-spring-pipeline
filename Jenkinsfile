@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-      SONAR_URL = "http://3.106.57.229:9000/"
+      SONAR_URL = "http://3.27.188.47:9000/"  
     }
     
     stages {
@@ -44,16 +44,16 @@ pipeline {
             }
         }
         stage('Check SonarQube Server Reachability') {
-            steps {
-                script {
-                    def response = sh(script: "curl -IsS ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStdout: true).trim()
-                    if (response != '200') {
-                        error "SonarQube server is not reachable. HTTP response code: ${response}"
-            } else {
-                        echo "SonarQube server is reachable"
-                    }
-                }
+          steps {
+            script {
+              def responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStatus: true).trim()
+              if (responseCode == '200') {
+                echo "SonarQube server is reachable"
+              } else {
+                error "SonarQube server is not reachable. HTTP response code: ${responseCode}"
+              }
             }
+          }
         }
     }
 }
