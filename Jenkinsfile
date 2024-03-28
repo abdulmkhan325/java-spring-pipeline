@@ -55,5 +55,23 @@ pipeline {
             }
           }
         }
+        stage('Build with Maven') {
+            steps { 
+                sh 'ls -ltr'
+                sh 'mvn clean package || { echo "Maven build failed"; exit 1; }'
+            }
+        }
+        stage('Check WAR file') {
+            steps {
+                script {
+                    def warFile = sh(returnStdout: true, script: 'find target -name "*.war"').trim()
+                    if (warFile.isEmpty()) {
+                        error 'WAR file not found'
+                    } else {
+                        echo "Found WAR file: $warFile"
+                    }
+                }
+            }
+        }
     }
 }
