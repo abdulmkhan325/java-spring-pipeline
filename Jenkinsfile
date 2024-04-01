@@ -92,7 +92,7 @@ pipeline {
             
                     if (repositoryExists != "200") {
                         // Call the Python script to create the repository
-                        sh "python3 create_artifact_repo.py ${JFROG_URL} ${JFROG_REPO} ${REPO_TYP} ${JFROG_USR_NAME} ${JFROG_USR_PASS}"
+                        sh "python3 create_repository.py ${JFROG_URL} ${JFROG_REPO} ${REPO_TYP} ${JFROG_USR_NAME} ${JFROG_USR_PASS}"
                     } else {
                         echo "Repository '${JFROG_REPO}' already exists"
                     }
