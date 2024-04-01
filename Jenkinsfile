@@ -85,8 +85,8 @@ pipeline {
         //     }
         // }
         stage('Upload WAR using Python Script') {
-            script { 
-                steps {
+            steps { 
+                script {
                     def response  = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${JFROG_URL}", returnStdout: true).trim()
                     if (response == "200") {
                         echo 'JFrog repository already exists. Proceeding with upload...'
