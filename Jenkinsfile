@@ -1,9 +1,14 @@
-/* groovylint-disable CompileStatic, LineLength, NestedBlockDepth, NoDef, UnnecessaryGString, UnnecessaryGetter, VariableTypeRequired */
+/* groovylint-disable CompileStatic, Indentation, LineLength, NestedBlockDepth, NoDef, UnnecessaryGString, UnnecessaryGetter, VariableTypeRequired */
 pipeline {
     agent any
 
     environment {
-      SONAR_URL = "http://54.66.22.85:9000/"  
+      SONAR_URL = "http://13.239.34.240:9000/"  
+      JFROG_URL = "http://13.239.34.240:8082/"
+      JFROG_REPO = "java-spring-webapp-repo"
+      REPO_TYP = "generic"
+      JFROG_USR_NAME = credentials('jfrog-username')   
+      JFROG_USR_PASS = credentials('jfrog-password')
     }
     
     stages {
@@ -11,7 +16,7 @@ pipeline {
             steps {
                 sh 'echo passed'
                 sh 'pwd'
-            //git branch: 'test', url: 'https://github.com/abdulmkhan325/java-spring-pipeline.git'
+                //git branch: 'test', url: 'https://github.com/abdulmkhan325/java-spring-pipeline.git'
             }
         }
         stage('Check or Install Python3') {
@@ -43,18 +48,18 @@ pipeline {
                 }
             }
         }
-        stage('Check SonarQube Server Reachability') {
-          steps {
-            script {
-              def responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStdout: true).trim() 
-              if (responseCode == "200") {
-                echo "SonarQube server is reachable"
-              } else {
-                error "SonarQube server is not reachable. HTTP response code: ${responseCode}"
-              }
-            }
-          }
-        }
+        // stage('Check SonarQube Server Reachability') {
+        //   steps {
+        //     script {
+        //       def responseCode = sh(script: "curl -IsS --max-time 5 ${SONAR_URL} | head -n 1 | cut -d' ' -f2", returnStdout: true).trim() 
+        //       if (responseCode == "200") {
+        //         echo "SonarQube server is reachable"
+        //       } else {
+        //         error "SonarQube server is not reachable. HTTP response code: ${responseCode}"
+        //       }
+        //     }
+        //   }
+        // }
         stage('Build with Maven') {
             steps { 
                 sh 'ls -ltr'
@@ -73,12 +78,42 @@ pipeline {
                 }
             }
         }
-        stage('Static Code Analysis') {
+        // stage('Static Code Analysis') {
+        //     steps {
+        //         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+        //             sh "mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
+        //         }
+        //     }
+        // }
+        stage('Create Repository in JFrog Artifactory') {
             steps {
-                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-                    sh "mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}"
+                script {  
+                    def repositoryExists = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${JFROG_URL}/artifactory/api/repositories/${JFROG_REPO}", returnStdout: true).trim()
+            
+                    if (repositoryExists != "200") {
+                        // Call the Python script to create the repository
+                        sh "python create_artifact_repo.py ${JFROG_URL} ${JFROG_REPO} ${REPO_TYP} ${JFROG_USR_NAME} ${JFROG_USR_PASS}"
+                    } else {
+                        echo "Repository '${JFROG_REPO}' already exists"
+                    }
                 }
             }
         }
+        // stage('Python Script to Upload WAR') {
+        //     steps {
+        //         script {
+        //             def warFile = sh(script: 'ls target/*.war', returnStdout: true).trim()
+        //             if (warFile.isEmpty()) {
+        //                 error 'WAR file not found'
+        //             } else {
+        //                 def warFileName = warFile.split('/')[-1]
+        //                 def uploadUrl = "https://<your-artifactory-url>/your-repository/${warFileName}"
+
+        //                 // Call the Python script to upload the WAR file to Artifactory
+        //                 sh "python <path-to-your-python-script> ${warFile} ${uploadUrl}"
+        //             }       
+        //         }
+        //     }
+        // }
     }
 }

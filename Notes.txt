@@ -79,3 +79,47 @@ pipeline {
         }
     }
 }
+
+
+Change ip address locations - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+- Github webhook
+- Manage Jenkins > System > Jenkins Sonar Auth
+- Change in groovy enviroment vars   
+
+
+Jenkins - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ 
+4075 // Sunny 
+
+SonarQube - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+login as root and then
+
+sudo su - sonarqube  
+
+cd /home/sonarqube/sonarqube-9.4.0.54424/bin/linux-x86-64
+
+sudo ./sonar.sh start
+
+ip-address:9000
+
+4075 // admin 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+JFrog Installation - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+wget https://releases.jfrog.io/artifactory/artifactory-rpms/artifactory-rpms.repo -O jfrog-artifactory-rpms.repo;
+
+sudo mv jfrog-artifactory-rpms.repo /etc/yum.repos.d/;
+
+sudo yum update && sudo yum install jfrog-artifactory-oss -y 
+
+Port 8081 or 8082
+
+systemctl status artifactory.service
+
+Snmbhk!002 // admin
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
