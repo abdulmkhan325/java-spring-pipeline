@@ -85,13 +85,15 @@ pipeline {
         //     }
         // }
         stage('Upload WAR using Python Script') {
-            steps {
-                def response  = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${JFROG_URL}", returnStdout: true).trim()
+            script { 
+                steps {
+                    def response  = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${JFROG_URL}", returnStdout: true).trim()
                     if (response == "200") {
                         echo 'JFrog repository already exists. Proceeding with upload...'
                         sh "python3 upload_to_artifactory.py ${WAR_FILE_PATH} ${JFROG_URL} ${JFROG_USR_NAME} ${JFROG_USR_PASS}"
                     } else {
                         echo "JFrog repository does not exist"
+                    }
                 }
             }
         }
