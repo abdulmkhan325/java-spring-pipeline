@@ -3,10 +3,9 @@ pipeline {
     agent any
 
     environment {
+      WAR_FILE_PATH = "target/*.war"
       SONAR_URL = "http://13.239.34.240:9000/"  
-      JFROG_URL = "http://13.239.34.240:8082/"
-      JFROG_REPO = "java-spring-webapp-repo"
-      REPO_TYP = "generic"
+      JFROG_URL = "http://13.239.34.240:8082/artifactory/a1-java-spring-webapp-repo/" 
       JFROG_USR_NAME = credentials('jfrog-username')   
       JFROG_USR_PASS = credentials('jfrog-password')
     }
@@ -85,35 +84,10 @@ pipeline {
         //         }
         //     }
         // }
-        stage('Create Repository in JFrog Artifactory') {
+        stage('Upload WAR using Python Script') {
             steps {
-                script {  
-                    def repositoryExists = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${JFROG_URL}/artifactory/api/repositories/${JFROG_REPO}", returnStdout: true).trim()
-            
-                    if (repositoryExists != "200") {
-                        // Call the Python script to create the repository
-                        sh "python3 create_repository.py ${JFROG_URL} ${JFROG_REPO} ${REPO_TYP} ${JFROG_USR_NAME} ${JFROG_USR_PASS}"
-                    } else {
-                        echo "Repository '${JFROG_REPO}' already exists"
-                    }
-                }
+                sh "python3 upload_to_artifactory.py ${WAR_FILE_PATH} ${JFROG_URL} ${JFROG_USR_NAME} ${JFROG_USR_PASS}"
             }
         }
-        // stage('Python Script to Upload WAR') {
-        //     steps {
-        //         script {
-        //             def warFile = sh(script: 'ls target/*.war', returnStdout: true).trim()
-        //             if (warFile.isEmpty()) {
-        //                 error 'WAR file not found'
-        //             } else {
-        //                 def warFileName = warFile.split('/')[-1]
-        //                 def uploadUrl = "https://<your-artifactory-url>/your-repository/${warFileName}"
-
-        //                 // Call the Python script to upload the WAR file to Artifactory
-        //                 sh "python3 <path-to-your-python-script> ${warFile} ${uploadUrl}"
-        //             }       
-        //         }
-        //     }
-        // }
     }
 }
